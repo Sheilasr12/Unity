@@ -1,0 +1,44 @@
+----Construir docker-------
+docker build -t unity-robotics:nav2-slam-example ./
+
+-----Lanzar docker----------
+docker run -it --rm -p 6080:80 -p 10000:10000 --shm-size=1024m unity-robotics:nav2-slam-example
+
+-----Página web docker------
+http://127.0.0.1:6080/
+
+En LXTerminal, escribir uno de los siguientes comandos: 
+
+ros2 launch unity_slam_example unity_slam_example.py
+ros2 launch unity_slam_example unity_viz_example.py
+
+(Para pegar en la flecha de la derecha, abrir portapapeles)
+
+----- Darle a Play en Unity --------
+En topics, buscar:
+- goal_pose
+- map
+
+---- Mover el robot desde ROS -----
+ros2 topic pub -1 /goal_pose geometry_msgs/PoseStamped "{header: {stamp: {sec: 0}, frame_id: 'map'}, pose: {position: {x: 3.0, y: 0.0, z: 0.0}, orientation: {w: 1.0}}}"
+
+----- Visualizar Costmap ---------
+El costmap es lo que va viendo el sensor mientras el robot se mueve
+El global almacena todo lo que ha visto 
+El local almacena lo que ve en cada instante
+
+Expandir DefaultVisualizationSuite -> nav_msgs -> OccupancyGrid 
+y poner su topic como /map
+Add Component -> Occupancy Grid Default Visualizer
+y poner su topic como /global_costmap/costmap
+y poner como material Packages/Robotics Visualization/Runtime/Materials/OccupancyGrid
+y cambiar el color para que se note la diferencia 
+
+
+
+----- Visualizar el Laser Scan ---------
+Expandir DefaultVisualizationSuite -> sensor_msgs -> LaserScan
+y poner como topic /scan
+y poner en TF Tracking Settings: type -> Track Latest
+				 TF Topic -> /tf
+
